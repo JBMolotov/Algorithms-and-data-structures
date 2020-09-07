@@ -22,10 +22,11 @@ int main ()
     }
     
     ocorrencia(&n, &repeats, i);
+    int x = eliminarOcorrencia(&n, &repeats, i);
     
-    for(int j = 0; j < i; j++)
+    for(int j = 0; j < x; j++)
     {
-        printf ("%d\n", repeats[j]);
+        printf ("%d(%d)\n", n[j], repeats[j]);
     }
     return 0;
 }
@@ -35,14 +36,40 @@ void ocorrencia(int* n, int* repeats, int i)
     for (int j = 0; j < i; j++)
     {
         repeats[j] = 0;
-        for (int k = 0; k < i; k++)
+        for (int k = j; k < i; k++)
         {
             if (n[j] == n[k])
             {
                 repeats[j]++;
-                n[k] = NULL;
             }    
         }
     }
     return repeats;
+}
+
+int eliminarOcorrencia(int* n, int* repeats, int i)
+{
+    int n_aux[100], r_aux[100];
+    int x = 0, k = 0;
+    for (int j = 0; j < i; j++)
+    {
+        for (k = 0; k < x; k++)
+        {
+            if (n[j] == n[k])
+            {
+               
+               break;
+            }    
+        }
+
+        if (k == x)
+        {
+            n_aux[x] = n[j];
+            r_aux[x] = repeats[j];
+            x++;
+        }
+    }
+    n = n_aux;
+    repeats = r_aux;
+    return x;
 }
