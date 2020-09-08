@@ -4,12 +4,25 @@
 #include <string.h>
 #include <stdbool.h>
 
+int lerEntradas(int*);
 void ocorrencia(int*, int*, int);
+int eliminarOcorrencia(int*, int*, int);
+void imprimirResultados(int*, int*, int);
 
 int main ()
 {
+    int n[100], r[100];  //n -> entradas em vetor, r -> repeticoes em vetor respetivamente ao n
+    int i = lerEntradas(&n); //i -> numero de itens lidos
+    ocorrencia(&n, &r, i); //calcula as ocorrencias de cada item
+    int x = eliminarOcorrencia(&n, &r, i); //x -> numero atualizado de itens
+    imprimirResultados(&n, &r, x);
+    
+    return 0;
+}
+
+int lerEntradas(int* n)
+{
     char str[1000]; //so pra ler a entrada
-    int n[100], repeats[100];
     int i = 0; //numero de entradas, max 100
     scanf("%[^\n]s", str); 
     char * pch;
@@ -20,15 +33,7 @@ int main ()
         pch = strtok (NULL, " ");
         i++;
     }
-    
-    ocorrencia(&n, &repeats, i);
-    int x = eliminarOcorrencia(&n, &repeats, i);
-    
-    for(int j = 0; j < x; j++)
-    {
-        printf ("%d(%d)\n", n[j], repeats[j]);
-    }
-    return 0;
+    return i;
 }
 
 void ocorrencia(int* n, int* repeats, int i)
@@ -73,3 +78,13 @@ int eliminarOcorrencia(int* n, int* repeats, int i)
     repeats = r_aux;
     return x;
 }
+
+void imprimirResultados(int* n, int* r, int x)
+{
+    for(int j = 0; j < x; j++)
+    {
+        printf ("%d(%d)\n", n[j], r[j]);
+    }
+}
+
+//Molotov
