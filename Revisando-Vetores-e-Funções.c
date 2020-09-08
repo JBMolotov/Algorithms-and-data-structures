@@ -12,10 +12,10 @@ void imprimirResultados(int*, int*, int);
 int main ()
 {
     int n[100], r[100];  //n -> entradas em vetor, r -> repeticoes em vetor respetivamente ao n
-    int i = lerEntradas(&n); //i -> numero de itens lidos
-    ocorrencia(&n, &r, i); //calcula as ocorrencias de cada item
-    int x = eliminarOcorrencia(&n, &r, i); //x -> numero atualizado de itens
-    imprimirResultados(&n, &r, x);
+    int i = lerEntradas(n); //i -> numero de itens lidos
+    ocorrencia(n, r, i); //calcula as ocorrencias de cada item
+    int x = eliminarOcorrencia(n, r, i); //x -> numero atualizado de itens
+    imprimirResultados(n, r, x);
     
     return 0;
 }
@@ -49,7 +49,6 @@ void ocorrencia(int* n, int* repeats, int i)
             }    
         }
     }
-    return repeats;
 }
 
 int eliminarOcorrencia(int* n, int* repeats, int i)
