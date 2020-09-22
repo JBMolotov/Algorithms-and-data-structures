@@ -2,39 +2,57 @@
 #include <stdlib.h>
 #include <string.h> 
  
-void LerEntradas();
+FILE* AbrirArquivo(char*);
+void LerEntradas(FILE*);
 int Substituir(char *frase, char *erro, char *corrigido);
+void FecharArquivo(FILE*);
 
-int main()
+int main(int argc, char **argv)
 {
-    LerEntradas();
+    FILE *fb = AbrirArquivo(argv[1]);
+    LerEntradas(fb);
+    FecharArquivo(fb);
     return 0;
 }
 
-void LerEntradas()
+FILE* AbrirArquivo(char* arquivo)
+{
+    FILE *fb;
+
+    if ((fb = fopen(arquivo, "r")) == NULL)
+    {
+        printf("Erro ao abrir o arquivo.");
+        // Program exits if the file pointer returns NULL.
+        exit(1);
+    }
+    
+    return fb;
+}
+
+void LerEntradas(FILE* fb)
 {
     char frase[100]; //frase inicial
     char erro[20]; //erro a ser corrigido
     char correcao[20]; //correçã
     
-    scanf("%[^\n]s", frase); 
+    fscanf(fb, "%[^\n]s", frase); 
     //printf("%s\n", frase);   
-    getchar(); //retirar o \n (enter)
+    fgetc(fb); //retirar o \n (enter)
 
-    scanf("%[^\n]s", erro);     
+    fscanf(fb, "%[^\n]s", erro);     
     //printf("%s\n", erro);
-    getchar(); 
+    fgetc(fb);
 
-    scanf("%[^\n]s", correcao);   
+    fscanf(fb, "%[^\n]s", correcao);   
     //printf("%s\n", correcao);
-    int ch =  getchar(); 
+    int ch = fgetc(fb);
 
     Substituir(frase, erro, correcao);
     printf("%s\n", frase); 
 
     if(!(ch == EOF)) //Se não for o final do arquivo, leia as entradas novamente
     {
-        LerEntradas();
+        LerEntradas(fb);
     }
 }
 
@@ -71,6 +89,11 @@ int Substituir(char *frase, char *erro,  char *corrigido)
    n_erros += Substituir(aux + cLen, erro, corrigido); //tenta achar mais erros
 
    return(n_erros);
+}
+
+void FecharArquivo(FILE* fb)
+{
+    fclose(fb);
 }
 
 //Molotov
