@@ -33,17 +33,8 @@ FILE* AbrirArquivos()
     FILE *fb;
     char arquivo[20];
     scanf("%[^\n]s", arquivo);
-    if ((fb = fopen(arquivo, "r")) == NULL)
-    {
-        printf("Erro ao abrir o arquivo.");
-        // Sair do programa caso retornar 1
-        exit(1);
-    }
     
-    char nome_lab[20]; //nome do arquivo do labirinto
-    fscanf(fb, "%[^\n]s", nome_lab); 
-
-    if ((fb = fopen(nome_lab, "r")) == NULL)
+    if ((fb = fopen(arquivo, "r")) == NULL)
     {
         printf("Erro ao abrir o arquivo.");
         // Sair do programa caso retornar NULL
@@ -96,7 +87,7 @@ int PercorrerLabirinto(char** labirinto, int x, int y, int linhas, int colunas)
     return visitados;
 }
 
-int Busca(char** labirinto, int x, int y, int x_final, int y_final, int* visitados)
+int Busca(char** labirinto, int x, int y, int y_final, int x_final, int* visitados)
 {
     int tentiva = 0;
     
@@ -112,25 +103,25 @@ int Busca(char** labirinto, int x, int y, int x_final, int y_final, int* visitad
         //Ordem de busca (Cima, Direita, Baixo, Esquerda);
         if(labirinto[y-1][x] == '.' && tentiva == 0) 
         { 
-            tentiva += Busca(labirinto, x, y-1, x_final, y_final, visitados);
+            tentiva += Busca(labirinto, x, y-1, y_final, x_final, visitados);
             *visitados += 1;
         } //Cima
 
         if(labirinto[y][x+1] == '.' && tentiva == 0)
         {
-            tentiva += Busca(labirinto, x+1, y, x_final, y_final, visitados);
+            tentiva += Busca(labirinto, x+1, y, y_final, x_final, visitados);
             *visitados += 1;
         } //Direita
 
         if(labirinto[y+1][x] == '.' && tentiva == 0)
         { 
-            tentiva += Busca(labirinto, x, y+1, x_final, y_final, visitados);
+            tentiva += Busca(labirinto, x, y+1, y_final, x_final, visitados);
             *visitados += 1;
         } //Baixo
 
         if(labirinto[y][x-1] == '.' && tentiva == 0) 
         { 
-            tentiva += Busca(labirinto, x-1, y, x_final, y_final, visitados);
+            tentiva += Busca(labirinto, x-1, y, y_final, x_final, visitados);
             *visitados += 1;
         } //Esquerda
 
@@ -149,12 +140,11 @@ void ImprimirSaida(char** labirinto, int linhas, int npessoas, int caminhos, int
     {
         printf("%s\n", labirinto[i]); 
     }
-    printf("\n");
 
     printf("\nVoce escapou de todos! Ninguem conseguiu te segurar!\n");
     printf("Veja abaixo os detalhes da sua fuga:\n");
     printf("----Pessoas te procurando: %d\n", npessoas);
-    printf("----Numero total de caminhos validos: %d\n", caminhos);
+    printf("----Numero total de caminhos validos:   %d\n", caminhos);
     printf("----Numero total de caminhos visitados: %d\n", visitados);
     printf("----Exploracao total do labirinto: %.1lf%%\n", exploracao);
 }
