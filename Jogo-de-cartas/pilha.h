@@ -1,4 +1,4 @@
-#define TAM 100
+#define TAM 100000
 
 typedef int elem;
 
@@ -9,15 +9,6 @@ typedef struct {
 
 // cria pilha
 void create(Pilha *p);
-
-// esvazia pilha
-void empty(Pilha *p);
-
-// esta vazia?
-int isEmpty(Pilha p); // parametro passado por valor
-
-// esta cheia?
-int isFull(Pilha *p); // parametro passado por referecia
 
 // insere na pilha
 int push(Pilha *p, elem x);

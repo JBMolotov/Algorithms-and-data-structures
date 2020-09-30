@@ -6,22 +6,6 @@ void create(Pilha *p) {
     return;
 }
 
-// esvazia pilha
-void empty(Pilha *p) {
-    create(p);
-    return;
-}
-
-// esta vazia?
-int isEmpty(Pilha p) { // parametro passado por valor
-    return (p.topo == -1);
-}
-
-// esta cheia?
-int isFull(Pilha *p) { // parametro passado por referecia
-    return (p->topo == TAM-1);
-}
-
 // insere na pilha
 int push(Pilha *p, elem x) {
     if (isFull(p))
