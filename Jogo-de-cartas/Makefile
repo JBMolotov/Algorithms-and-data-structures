@@ -1,5 +1,5 @@
 all: clean
-	@g++ -o main pilha.h pilha.c main.c -lglut -lGLU -lGL -lm
+	gcc -o main pilha.h pilha.c main.c 
 run: all 
 	./main
 clean:
