@@ -38,7 +38,7 @@ void LerNumeros(Lista *num1, Lista *num2)
     char x[255], y[255];
     scanf("%[^ ]s", x);
     getchar();
-    scanf("%[^\n]s", y);
+    scanf("%s", y);
     for(int i = 0; i < strlen(x); i++)
     {        
          if (x[i] == '-')
