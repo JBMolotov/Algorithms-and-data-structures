@@ -324,7 +324,7 @@ Musica* partition(Musica *low, Musica *high)
    
     for (Musica *j = low; j != high; j = j->prox) 
     { 
-        if (strcmp(j->id, x) >= 0)
+        if (strcmp(j->id, x) <= 0)
         { 
             i = (i == NULL) ? low : i->prox; 
   
