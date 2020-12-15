@@ -65,6 +65,14 @@ void ExcluiLista(Lista *l)
         ExcluiAlbum(alb_aux);
     }
 
+    //apaga os vetores de similaridade
+    Musica *aux = l->mus_ini;
+    while (aux->prox != NULL) 
+    {
+        free(aux->similaridade);
+        aux = aux->prox;
+    }
+
     // apaga as musicas
     Musica *mus_aux;
     while (l->mus_ini != NULL) 
@@ -74,9 +82,9 @@ void ExcluiLista(Lista *l)
         ExcluiMusica(mus_aux);
     }    
 
-    for (int i = 0; i <= l->n_musicas; i++)
-        free(l->dissimilaridade[i]);
-    free(l->dissimilaridade);
+    // for (int i = 0; i <= l->n_musicas; i++)
+    //    free(l->dissimilaridade[i]);
+    // free(l->dissimilaridade);
 
     // apaga lista
     free(l);
@@ -84,9 +92,9 @@ void ExcluiLista(Lista *l)
 }
 
 //Imprime os artistas
-void ImprimeLista(Lista *l) 
+void ImprimeLista(Musica *m) 
 {
-    Musica *aux = l->mus_ini;
+    Musica *aux = m;
     while (aux->prox != NULL) 
     {
         printf("%s", aux->nome);
@@ -266,6 +274,7 @@ void swap (Musica *a, Musica *b )
     tmp->tempo = a->tempo;
     tmp->acousticness = a->acousticness;
     tmp->energy = a->energy;
+    tmp->danceability = a->danceability;
     tmp->art = a->art;
     tmp->alb = a->alb;
 
@@ -282,6 +291,7 @@ void swap (Musica *a, Musica *b )
     a->tempo = b->tempo;
     a->acousticness = b->acousticness;
     a->energy = b->energy;
+    a->danceability = b->danceability;
     a->art = b->art;
     a->alb = b->alb;
 
@@ -298,6 +308,7 @@ void swap (Musica *a, Musica *b )
     b->tempo = tmp->tempo;
     b->acousticness = tmp->acousticness;
     b->energy = tmp->energy;
+    b->danceability = tmp->danceability;
     b->art = tmp->art;
     b->alb = tmp->alb;
 
@@ -392,7 +403,76 @@ void CalcDissimilaridade(Lista *l)
         j = 0;
         m1 = m1->prox;
         i++;
-
     }
-    printf("caralho\n");   
+}
+
+int buscaBinaria(Lista *l, char *procurado)
+{
+    int esq = 0, dir = l->n_musicas-1, meio;
+    while(esq <= dir)
+    {
+        meio = (esq+dir)/2;
+        if ( strcmp(l->palavra[meio], procurado) == 0)
+        {
+            return 1;
+        }    
+        else if(  strcmp(l->palavra[meio], procurado) > 0)
+        {
+            dir = meio-1;
+        }
+        else
+        {
+            esq = meio+1;
+        }
+            
+    }
+    return 0;
+}
+
+
+
+void radixsort(Similar *vet, int n) 
+{
+	int i, exp = 1, bucket[n];
+    Similar m, temp[n];
+
+    m = vet[0];
+
+	for(i = 0; i < n; i++) 
+    {
+		if(vet[i].distance > m.distance) {
+			m = vet[i];
+		}
+	}
+
+	while(( m.distance/exp ) > 0) 
+    {
+		for (i = 0; i < n; i++) 
+        {
+			bucket[i] = 0;
+		}
+
+		for(i = 0; i < n; i++)
+        {
+            int x = (int)(vet[i].distance*1000000 / exp) % 10;
+            //printf("d=%lf / exp=%d  =  %d\n", vet[i].distance*1000000, exp, x);
+			// printf("x=%d ", x);
+            bucket[x]++;
+		}
+
+		for(i = 1; i < n; i++) 
+        {
+			bucket[i] += bucket[i-1];
+		}
+		
+        for(i = (n - 1); i >= 0; i--)
+        {
+            int y = (int)(vet[i].distance*1000000 / exp) % 10;
+        	temp[--bucket[y]] = vet[i];
+		}
+		for(i = 0; i < n; i++) {
+			vet[i] = temp[i];
+		}
+		exp *= 10;
+	}
 }

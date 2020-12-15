@@ -49,7 +49,7 @@ typedef struct lista
 
 Lista* CriaLista();
 void ExcluiLista(Lista *l);
-void ImprimeLista(Lista *l);
+void ImprimeLista(Musica *m);
 void ExcluiArtista(Artista *a);
 void ExcluiAlbum(Album *a);
 void ExcluiMusica(Musica *m);
@@ -72,3 +72,4 @@ Musica* partition(Musica *low, Musica *high);
 
 double distancia(Musica *m1, Musica *m2);
 void CalcDissimilaridade(Lista *l);
+void radixsort(Similar *vet, int n) ;

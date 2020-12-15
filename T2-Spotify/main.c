@@ -14,16 +14,21 @@ int main(void)
     FILE *fb = AbrirArquivo();    
 
     LerDados(spotify, fb);
-    //LerBusca(spotify);
+    LerBusca(spotify);
 
     QuickSort(spotify);
 
     CalcDissimilaridade(spotify);
 
+    radixsort(spotify->mus_ini->similaridade, spotify->n_musicas);
+
+    for (int i = 0; i <= spotify->n_musicas; i++)
+    {
+        printf("%lf ", spotify->mus_ini->similaridade[i].distance);
+    }
+
     //ImprimeLista(spotify);
    
-
-    printf("exclui\n");
     ExcluiLista(spotify);
     
     return 0;
