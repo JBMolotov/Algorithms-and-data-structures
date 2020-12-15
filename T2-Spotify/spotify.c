@@ -15,6 +15,7 @@ Lista* CriaLista()
     l->n_artistas = 0;
     l->n_artistas = 0;
     l->n_musicas = 0;
+    l->dissimilaridade = NULL;
     return l;
 }
 
@@ -72,6 +73,10 @@ void ExcluiLista(Lista *l)
         l->mus_ini = l->mus_ini->prox;
         ExcluiMusica(mus_aux);
     }    
+
+    for (int i = 0; i <= l->n_musicas; i++)
+        free(l->dissimilaridade[i]);
+    free(l->dissimilaridade);
 
     // apaga lista
     free(l);
@@ -178,6 +183,7 @@ Musica* CriaMusica()
     m->ant = NULL;
     m->alb = NULL;
     m->art = NULL;
+    m->similaridade = NULL;
 
     return m;
 }
@@ -335,3 +341,58 @@ Musica* partition(Musica *low, Musica *high)
     swap(i, high); 
     return i; 
 }   
+
+double distancia(Musica *m1, Musica *m2)
+{
+    if(m1 == m2)
+        return 0;
+    double d = 0;
+    d += pow(m1->acousticness - m2->acousticness, 2);
+    d += pow(m1->danceability - m2->danceability, 2);
+    d += pow(m1->energy - m2->energy, 2);
+    d += pow(m1->instrumentalness - m2->instrumentalness, 2);
+    d += pow(m1->liveness - m2->liveness, 2);
+    d += pow(m1->loudness - m2->loudness, 2);
+    d += pow(m1->speechiness - m2->speechiness, 2);
+    d += pow(m1->tempo - m2->tempo, 2);
+    d += pow(m1->time_signature - m2->time_signature, 2);
+    d = sqrt(d);
+    return d;
+}
+
+void CalcDissimilaridade(Lista *l)
+{
+
+    Musica *m1 = l->mus_ini;
+    Musica *m2 = l->mus_ini;
+
+    int i = 0, j = 0;
+    
+    l->dissimilaridade = malloc(l->n_musicas * sizeof(double));
+    for (int z = 0; z <= l->n_musicas; z++)
+        l->dissimilaridade[z] = malloc(l->n_musicas * sizeof(double));
+
+
+    while (m1->prox != NULL) 
+    {
+        m1->similaridade = malloc(l->n_musicas * sizeof(Similar));
+        
+        while (m2->prox != NULL) 
+        {
+            l->dissimilaridade[i][j] = distancia(m1, m2);
+            
+            m1->similaridade[j].musica = m2;
+
+            m1->similaridade[j].distance = l->dissimilaridade[i][j]; 
+            m2 = m2->prox;
+            
+            j++;
+        }    
+        m2 = l->mus_ini;
+        j = 0;
+        m1 = m1->prox;
+        i++;
+
+    }
+    printf("caralho\n");   
+}

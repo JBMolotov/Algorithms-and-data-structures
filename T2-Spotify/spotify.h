@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 typedef struct album
 {
@@ -24,8 +25,15 @@ typedef struct musica
     double acousticness, danceability, energy, instrumentalness, liveness, loudness, speechiness, tempo;    
     Album *alb;
     Artista *art;
+    struct similar *similaridade;
     struct musica *prox, *ant;
 }Musica;
+
+typedef struct similar
+{
+    Musica *musica;
+    double distance;
+} Similar;
 
 typedef struct lista
 {
@@ -35,6 +43,8 @@ typedef struct lista
     int n_artistas;
     int n_albuns;
     int n_musicas;
+
+    double **dissimilaridade; //matriz de dissimilaridade
 }Lista;
 
 Lista* CriaLista();
@@ -60,3 +70,5 @@ void QuickSort(Lista *l);
 void _quickSort(Musica* low, Musica *high);
 Musica* partition(Musica *low, Musica *high);
 
+double distancia(Musica *m1, Musica *m2);
+void CalcDissimilaridade(Lista *l);

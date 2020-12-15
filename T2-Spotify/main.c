@@ -4,20 +4,26 @@
 
 FILE* AbrirArquivo();
 void LerDados(Lista* spotify, FILE *fb);
+void LerBusca(Lista* spotify);
 
 int main(void) 
 {
     Lista *spotify;
-    
     spotify = CriaLista();
 
     FILE *fb = AbrirArquivo();    
 
     LerDados(spotify, fb);
+    //LerBusca(spotify);
 
     QuickSort(spotify);
-    ImprimeLista(spotify);
+
+    CalcDissimilaridade(spotify);
+
+    //ImprimeLista(spotify);
    
+
+    printf("exclui\n");
     ExcluiLista(spotify);
     
     return 0;
@@ -124,6 +130,22 @@ void LerDados(Lista* spotify, FILE *fb)
     }
 
     fclose(fb);
+}
+
+void LerBusca(Lista* spotify)
+{
+    int Q; //Qtd de musicas para busca de dissimilaridade
+    int K; //Qtd de musicas similares
+    char *id = malloc(50);
+    scanf("%d %d", &Q, &K);
+    for(int i = 0; i < Q; i++)
+    {
+        scanf("%s", id);
+        
+        //Dissimilaridade(spotify, id);
+    }
+
+    free(id);
 }
 
 //Molotov
