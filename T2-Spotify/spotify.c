@@ -5,13 +5,15 @@ Lista* CriaLista()
 {
     Lista *l;
     l = malloc(sizeof(Lista)); // instancia lista
+    
     // define lista vazia
+    l->musicas = malloc(TAM * sizeof(Musica*));
+    // for (int i = 0; i <= TAM; i++)
+    //     l->musicas[i] = malloc(sizeof(Musica*));
     l->art_ini = NULL;
     l->art_fim = NULL;
     l->alb_ini = NULL;
     l->alb_fim = NULL;
-    l->mus_ini = NULL;
-    l->mus_fim = NULL;
     l->n_artistas = 0;
     l->n_artistas = 0;
     l->n_musicas = 0;
@@ -36,7 +38,7 @@ void ExcluiAlbum(Album *a)
 }
 
 void ExcluiMusica(Musica *m)
-{
+{   
     free(m->id);
     free(m->nome);
     free(m->release_date);
@@ -65,40 +67,24 @@ void ExcluiLista(Lista *l)
         ExcluiAlbum(alb_aux);
     }
 
-    //apaga os vetores de similaridade
-    Musica *aux = l->mus_ini;
-    while (aux->prox != NULL) 
-    {
-        free(aux->similaridade);
-        aux = aux->prox;
-    }
-
     // apaga as musicas
-    Musica *mus_aux;
-    while (l->mus_ini != NULL) 
+    //apaga os vetores de similaridade
+    for(int i = 0; i <= l->n_musicas; i++) 
     {
-        mus_aux = l->mus_ini;
-        l->mus_ini = l->mus_ini->prox;
-        ExcluiMusica(mus_aux);
-    }    
-
-    // for (int i = 0; i <= l->n_musicas; i++)
-    //    free(l->dissimilaridade[i]);
-    // free(l->dissimilaridade);
-
+        ExcluiMusica(l->musicas[i]);
+    }
+    
     // apaga lista
     free(l);
     l = NULL;
 }
 
 //Imprime os artistas
-void ImprimeLista(Musica *m) 
+void ImprimeLista(Lista *l) 
 {
-    Musica *aux = m;
-    while (aux->prox != NULL) 
+    for(int i = 0; i <= l->n_musicas; i++) 
     {
-        printf("%s", aux->nome);
-        aux = aux->prox;
+        printf("%d - %s\n", i, l->musicas[i]->id);
     }
 }
 
@@ -182,38 +168,22 @@ Album* AlbumExiste(Lista *l, char *id)
 //Cria uma nova musica e instancia dinamicamente
 Musica* CriaMusica() 
 {
+   
     Musica *m;
     m = malloc(sizeof(Musica)); // instancia musica
     m->id = malloc(30);
     m->nome = malloc(255);
     m->release_date = malloc(12);
-    m->prox = NULL;
-    m->ant = NULL;
     m->alb = NULL;
     m->art = NULL;
-    m->similaridade = NULL;
-
+    
     return m;
 }
 
-//Insere musica no album
-void InsereMusica(Lista *l, Musica *m)
-{
-    // cria no
-    m->prox = NULL;
-    m->ant = l->mus_fim;
-    // atualiza ponteiros
-    if (l->mus_fim != NULL)
-        l->mus_fim->prox = m;
-    l->mus_fim = m;
-    if (l->mus_ini == NULL)
-        l->mus_ini = m;
-}
 
 //Insere a partir de dados, um novo artista ou um existente, um novo album ou um existente e assim uma nova musica
 void Insere(Lista *l, char *track_name, char *track_id, char *album_name, char *album_id, char *artist_name, char *artist_id, char *release_date, char *length, char *popularity, char *acousticness, char *danceability, char *energy, char *instrumentalness, char *liveness, char *loudness, char *speechiness, char *tempo, char *time_signature)
 {
-    
     Artista *art = ArtistaExiste(l, artist_id);
     Album *alb = AlbumExiste(l, album_id);
    
@@ -234,23 +204,25 @@ void Insere(Lista *l, char *track_name, char *track_id, char *album_name, char *
     }
 
 
-    Musica *m = CriaMusica();
-    InsereMusica(l, m);
-    strcpy(m->id, track_id);
-    strcpy(m->nome, track_name);
-    strcpy(m->release_date, release_date);
-    m->popularity = atoi(popularity);
-    m->length = atoi(length);
-    m->time_signature = atoi(time_signature);
-    m->instrumentalness = atof(instrumentalness);
-    m->liveness = atof(liveness);
-    m->loudness = atof(loudness);
-    m->speechiness = atof(speechiness);
-    m->tempo = atof(tempo);
-    m->acousticness = atof(acousticness);
-    m->energy = atof(energy);
-    m->art = art;
-    m->alb = alb;
+    int m = l->n_musicas;
+    l->musicas[m] = CriaMusica();
+
+    strcpy(l->musicas[m]->id, track_id);
+    strcpy(l->musicas[m]->nome, track_name);
+    strcpy(l->musicas[m]->release_date, release_date);
+    l->musicas[m]->popularity = atoi(popularity);
+    l->musicas[m]->length = atoi(length);
+    l->musicas[m]->time_signature = atoi(time_signature);
+    l->musicas[m]->instrumentalness = atof(instrumentalness);
+    l->musicas[m]->liveness = atof(liveness);
+    l->musicas[m]->loudness = atof(loudness);
+    l->musicas[m]->speechiness = atof(speechiness);
+    l->musicas[m]->tempo = atof(tempo);
+    l->musicas[m]->acousticness = atof(acousticness);
+    l->musicas[m]->energy = atof(energy);
+    l->musicas[m]->art = art;
+    l->musicas[m]->alb = alb;
+
 
     l->n_musicas += 1;
     art->n_musicas += 1;
@@ -316,44 +288,36 @@ void swap (Musica *a, Musica *b )
 } 
 
 // A função que chama função que organiza recursivamente 
-void QuickSort(Lista *l) 
+void QuickSort(Lista *l, int low, int high) 
 { 
-    // Chama a função QuickSort recursiva
-    _quickSort(l->mus_ini, l->mus_fim);        
-} 
-  
-void _quickSort(Musica* low, Musica *high) 
-{ 
-    if (high != NULL && low != high && low != high->prox) 
+    if (low < high) 
     { 
-        Musica *p = partition(low, high); 
-        _quickSort(low, p->ant); 
-        _quickSort(p->prox, high); 
+        int pi = partition(l, low, high); 
+  
+        QuickSort(l, low, pi - 1); 
+        QuickSort(l, pi + 1, high); 
     } 
-}
+} 
 
-Musica* partition(Musica *low, Musica *high) 
+int partition (Lista* l, int low, int high) 
 { 
- 
-    char *x = high->id; 
+    char *pivot = l->musicas[high]->id;
+    int i = (low - 1); 
   
-    Musica *i = low->ant; 
-   
-    for (Musica *j = low; j != high; j = j->prox) 
+    for (int j = low; j <= high- 1; j++) 
     { 
-        if (strcmp(j->id, x) <= 0)
+        if ( strcmp(l->musicas[j]->id, pivot) < 0) 
         { 
-            i = (i == NULL) ? low : i->prox; 
-  
-            swap(i, j); 
+            i++;
+            swap(l->musicas[i], l->musicas[j]); 
         } 
     } 
-    i = (i == NULL) ? low : i->prox;
-    swap(i, high); 
-    return i; 
-}   
+    swap(l->musicas[i + 1], l->musicas[high]); 
+    return (i + 1); 
+} 
 
-double distancia(Musica *m1, Musica *m2)
+
+double Distancia(Musica *m1, Musica *m2)
 {
     if(m1 == m2)
         return 0;
@@ -373,36 +337,19 @@ double distancia(Musica *m1, Musica *m2)
 
 void CalcDissimilaridade(Lista *l)
 {
-
-    Musica *m1 = l->mus_ini;
-    Musica *m2 = l->mus_ini;
-
-    int i = 0, j = 0;
+    l->dissimilaridade = malloc(l->n_musicas * sizeof(Similar));
     
-    l->dissimilaridade = malloc(l->n_musicas * sizeof(double));
+
     for (int z = 0; z <= l->n_musicas; z++)
-        l->dissimilaridade[z] = malloc(l->n_musicas * sizeof(double));
+        l->dissimilaridade[z] = malloc(l->n_musicas * sizeof(Similar));
 
-
-    while (m1->prox != NULL) 
-    {
-        m1->similaridade = malloc(l->n_musicas * sizeof(Similar));
-        
-        while (m2->prox != NULL) 
+    for (int i = 0; i <= l->n_musicas; i++)
+    {   
+        for (int j = 0; j <= l->n_musicas; j++)
         {
-            l->dissimilaridade[i][j] = distancia(m1, m2);
-            
-            m1->similaridade[j].musica = m2;
-
-            m1->similaridade[j].distance = l->dissimilaridade[i][j]; 
-            m2 = m2->prox;
-            
-            j++;
+            l->dissimilaridade[i][j].musica = l->musicas[j];
+            l->dissimilaridade[i][j].distance = Distancia(l->musicas[j], l->musicas[i]);       
         }    
-        m2 = l->mus_ini;
-        j = 0;
-        m1 = m1->prox;
-        i++;
     }
 }
 
@@ -412,11 +359,11 @@ int buscaBinaria(Lista *l, char *procurado)
     while(esq <= dir)
     {
         meio = (esq+dir)/2;
-        if ( strcmp(l->palavra[meio], procurado) == 0)
+        if ( strcmp(l->musicas[meio]->id, procurado) == 0)
         {
-            return 1;
+            return meio;
         }    
-        else if(  strcmp(l->palavra[meio], procurado) > 0)
+        else if( strcmp(l->musicas[meio]->id, procurado) > 0)
         {
             dir = meio-1;
         }
@@ -426,21 +373,21 @@ int buscaBinaria(Lista *l, char *procurado)
         }
             
     }
-    return 0;
+    return -1; //não achou
 }
-
-
 
 void radixsort(Similar *vet, int n) 
 {
 	int i, exp = 1, bucket[n];
+    int P = 1000000;
     Similar m, temp[n];
 
     m = vet[0];
 
 	for(i = 0; i < n; i++) 
     {
-		if(vet[i].distance > m.distance) {
+		if(vet[i].distance > m.distance)
+        {
 			m = vet[i];
 		}
 	}
@@ -454,9 +401,7 @@ void radixsort(Similar *vet, int n)
 
 		for(i = 0; i < n; i++)
         {
-            int x = (int)(vet[i].distance*1000000 / exp) % 10;
-            //printf("d=%lf / exp=%d  =  %d\n", vet[i].distance*1000000, exp, x);
-			// printf("x=%d ", x);
+            int x = ((int)round(vet[i].distance * P / exp)) % 10;
             bucket[x]++;
 		}
 
@@ -467,7 +412,7 @@ void radixsort(Similar *vet, int n)
 		
         for(i = (n - 1); i >= 0; i--)
         {
-            int y = (int)(vet[i].distance*1000000 / exp) % 10;
+            int y = ((int)round(vet[i].distance * P / exp)) % 10;
         	temp[--bucket[y]] = vet[i];
 		}
 		for(i = 0; i < n; i++) {
@@ -475,4 +420,18 @@ void radixsort(Similar *vet, int n)
 		}
 		exp *= 10;
 	}
+}
+
+void ImprimeSimilares(Lista *l, int index, int k)
+{
+    printf("----As %d musicas mais parecidas com %s sao:\n", k, l->musicas[index]->nome);
+    for (int i=0; i<k; i++)
+    {
+        printf("\t(%d)Artista: %s\n", i, l->dissimilaridade[index][i].musica->art->nome);
+        printf("\t\tMusica: %s\n", l->dissimilaridade[index][i].musica->nome);
+        printf("\t\tDissimilaridade: %lf\n", l->dissimilaridade[index][i].distance);
+        printf("\t\tLink: https://open.spotify.com/track/%s\n", l->dissimilaridade[index][i].musica->id);
+    }
+    printf("\n");
+
 }

@@ -14,20 +14,12 @@ int main(void)
     FILE *fb = AbrirArquivo();    
 
     LerDados(spotify, fb);
-    LerBusca(spotify);
 
-    QuickSort(spotify);
+    QuickSort(spotify, 0, spotify->n_musicas);
 
     CalcDissimilaridade(spotify);
-
-    radixsort(spotify->mus_ini->similaridade, spotify->n_musicas);
-
-    for (int i = 0; i <= spotify->n_musicas; i++)
-    {
-        printf("%lf ", spotify->mus_ini->similaridade[i].distance);
-    }
-
-    //ImprimeLista(spotify);
+    
+    LerBusca(spotify);    
    
     ExcluiLista(spotify);
     
@@ -71,6 +63,7 @@ void LerDados(Lista* spotify, FILE *fb)
             switch (i)
             {
             case 1:
+                getc(fb);
                 fscanf(fb, "%[^;]s", track_name);
                 break;
             case 2:
@@ -135,19 +128,21 @@ void LerDados(Lista* spotify, FILE *fb)
     }
 
     fclose(fb);
+    spotify->n_musicas -= 1;
 }
 
 void LerBusca(Lista* spotify)
 {
-    int Q; //Qtd de musicas para busca de dissimilaridade
-    int K; //Qtd de musicas similares
+    int q; //Qtd de musicas para busca de dissimilaridade
+    int k; //Qtd de musicas similares
     char *id = malloc(50);
-    scanf("%d %d", &Q, &K);
-    for(int i = 0; i < Q; i++)
+    scanf("%d %d", &q, &k);
+    for(int i = 0; i < q; i++)
     {
         scanf("%s", id);
-        
-        //Dissimilaridade(spotify, id);
+        int index = buscaBinaria(spotify, id);
+        radixsort(spotify->dissimilaridade[index], spotify->n_musicas); //So no i, ou seja na linha
+        ImprimeSimilares(spotify, index, k);
     }
 
     free(id);
